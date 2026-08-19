@@ -1,0 +1,155 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 320px;
+    max-height: 500px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+}
+
+.container {
+    padding: 16px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #16213e;
+}
+
+.header-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.header h1 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e94560;
+}
+
+.current-video {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    margin: 12px 0;
+    background: #16213e;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.current-video:hover {
+    background: #1a2744;
+}
+
+.bookmark-btn {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.bookmarks-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.bookmarks-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bookmarks-container::-webkit-scrollbar-thumb {
+    background: #e94560;
+    border-radius: 3px;
+}
+
+.bookmarks-container::-webkit-scrollbar-track {
+    background: #16213e;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-size: 13px;
+}
+
+.bookmark-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #16213e;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.bookmark-item:hover {
+    background: #1a2744;
+}
+
+.bookmark-item .time {
+    font-size: 12px;
+    color: #e94560;
+    font-weight: 600;
+    min-width: 40px;
+    cursor: pointer;
+}
+
+.bookmark-item .description {
+    flex: 1;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bookmark-item .actions {
+    display: flex;
+    gap: 6px;
+}
+
+.bookmark-item .actions img {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.bookmark-item .actions img:hover {
+    opacity: 1;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-delete-all {
+    background: #e94560;
+    color: white;
+}
+
+.btn-delete-all:hover {
+    background: #c73852;
+}

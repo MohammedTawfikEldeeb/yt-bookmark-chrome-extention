@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Bookmarks</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="assets/bookmark.png" alt="bookmark" class="header-icon">
+            <h1>YT Bookmarks</h1>
+        </header>
+
+        <div class="current-video" id="currentVideo">
+            <img src="assets/save.png" alt="save" id="bookmarkBtn" class="bookmark-btn">
+            <span>Bookmark this video</span>
+        </div>
+
+        <div class="bookmarks-container" id="bookmarksContainer">
+            <p class="empty-state" id="emptyState">No bookmarks yet</p>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-delete-all" id="deleteAllBtn">Delete All</button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+    "name": "My YT Extension",
+    "version": "1.0",
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "storage"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://*.youtube.com/*"],
+            "js": ["contentScript.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["assets/bookmark.png", "assets/delete.png"],
+            "matches": ["*://*.youtube.com/*"]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "My YT Extension",
+        "default_icon": {
+            "16": "assets/ext-icon.png",
+            "48": "assets/ext-icon.png",
+            "128": "assets/ext-icon.png"
+        }
+    },
+    "manifest_version": 3
+
+}
