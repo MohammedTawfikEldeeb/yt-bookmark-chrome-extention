@@ -11,39 +11,41 @@
         } else if (type === "ADD_BOOKMARK") {
             addNewBookmark();
         } else if (type === "SEEK") {
-            youtubePlayer = document.getElementsByClassName("video-stream html5-main-video")[0];
-            if (youtubePlayer) {
-                youtubePlayer.currentTime = value;
+            const player = document.querySelector("video");
+            if (player) {
+                player.currentTime = value;
             }
         }
     });
 
     function newVideoLoaded() {
-        const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
+        const existingBtn = document.getElementById("yt-bookmark-btn");
+        if (existingBtn) return;
 
-        if (!bookmarkBtnExists) {
-            const bookmarkBtn = document.createElement("img");
-            bookmarkBtn.src = chrome.runtime.getURL("assets/bookmark.png");
-            bookmarkBtn.className = "bookmark-btn";
-            bookmarkBtn.title = "Bookmark this video";
-            bookmarkBtn.style.cssText = "position:absolute;top:10px;right:10px;z-index:9999;width:32px;height:32px;cursor:pointer;background:rgba(0,0,0,0.7);border-radius:50%;padding:5px;";
-
-            youtubePlayer = document.getElementsByClassName("video-stream html5-main-video")[0];
-            const playerContainer = document.getElementById("movie_player") || document.querySelector(".html5-video-player");
-
-            if (playerContainer) {
-                playerContainer.style.position = "relative";
-                playerContainer.appendChild(bookmarkBtn);
-                bookmarkBtn.addEventListener("click", addNewBookmark);
-            }
+        const playerContainer = document.querySelector("#movie_player");
+        if (!playerContainer) {
+            setTimeout(newVideoLoaded, 1000);
+            return;
         }
+
+        const bookmarkBtn = document.createElement("button");
+        bookmarkBtn.id = "yt-bookmark-btn";
+        bookmarkBtn.innerHTML = `<img src="${chrome.runtime.getURL("assets/bookmark.png")}" style="width:24px;height:24px;">`;
+        bookmarkBtn.title = "Bookmark this video";
+        bookmarkBtn.style.cssText = "position:absolute;bottom:80px;right:10px;z-index:99999;cursor:pointer;background:rgba(0,0,0,0.8);border-radius:50%;padding:8px;border:none;display:flex;align-items:center;justify-content:center;pointer-events:auto;";
+
+        playerContainer.appendChild(bookmarkBtn);
+        bookmarkBtn.addEventListener("click", addNewBookmark);
     }
 
     function addNewBookmark() {
-        const currentTime = youtubePlayer.currentTime;
+        const video = document.querySelector("video");
+        if (!video) return;
+
+        const currentTime = video.currentTime;
         const newBookmark = {
             time: currentTime,
-            desc: "Bookmark at " + getTime(currentTime),
+            desc: "Bookmark at " + formatTime(currentTime),
         };
 
         chrome.storage.sync.get([currentVideo], (result) => {
@@ -53,9 +55,11 @@
         });
     }
 
-    function getTime(time) {
+    function formatTime(time) {
         const date = new Date(0);
         date.setSeconds(time);
         return date.toISOString().substr(11, 8);
     }
+
+    newVideoLoaded();
 })();
