@@ -54,6 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const item = document.createElement("div");
             item.className = "bookmark-item";
 
+            const header = document.createElement("div");
+            header.className = "bookmark-header";
+
             const time = document.createElement("span");
             time.className = "time";
             time.textContent = formatTime(bookmark.time);
@@ -61,12 +64,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 seekToTime(bookmark.time);
             });
 
-            const desc = document.createElement("span");
-            desc.className = "description";
-            desc.textContent = bookmark.desc;
-
             const actions = document.createElement("div");
             actions.className = "actions";
+
+            const editBtn = document.createElement("img");
+            editBtn.src = "assets/edit.png";
+            editBtn.title = "Edit note";
+            editBtn.addEventListener("click", () => {
+                editBookmark(index);
+            });
 
             const deleteBtn = document.createElement("img");
             deleteBtn.src = "assets/delete.png";
@@ -75,10 +81,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 deleteBookmark(index);
             });
 
+            actions.appendChild(editBtn);
             actions.appendChild(deleteBtn);
-            item.appendChild(time);
+            header.appendChild(time);
+            header.appendChild(actions);
+
+            const desc = document.createElement("span");
+            desc.className = "description";
+            desc.textContent = bookmark.desc;
+
+            item.appendChild(header);
             item.appendChild(desc);
-            item.appendChild(actions);
             bookmarksContainer.appendChild(item);
         });
     }
@@ -90,6 +103,19 @@ document.addEventListener("DOMContentLoaded", () => {
             chrome.storage.sync.set({ [currentVideoId]: JSON.stringify(videoBookmarks) }, () => {
                 loadBookmarks();
             });
+        });
+    }
+
+    function editBookmark(index) {
+        chrome.storage.sync.get([currentVideoId], (result) => {
+            const videoBookmarks = result[currentVideoId] ? JSON.parse(result[currentVideoId]) : [];
+            const newNote = prompt("Edit note:", videoBookmarks[index].desc);
+            if (newNote !== null) {
+                videoBookmarks[index].desc = newNote;
+                chrome.storage.sync.set({ [currentVideoId]: JSON.stringify(videoBookmarks) }, () => {
+                    loadBookmarks();
+                });
+            }
         });
     }
 

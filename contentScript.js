@@ -43,9 +43,13 @@
         if (!video) return;
 
         const currentTime = video.currentTime;
+        const note = prompt("Add a note for this bookmark:", "");
+
+        if (note === null) return;
+
         const newBookmark = {
             time: currentTime,
-            desc: "Bookmark at " + formatTime(currentTime),
+            desc: note || "Bookmark at " + formatTime(currentTime),
         };
 
         chrome.storage.sync.get([currentVideo], (result) => {
