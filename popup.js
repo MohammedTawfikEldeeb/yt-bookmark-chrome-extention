@@ -3,8 +3,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const bookmarksContainer = document.getElementById("bookmarksContainer");
     const emptyState = document.getElementById("emptyState");
     const deleteAllBtn = document.getElementById("deleteAllBtn");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const noteInput = document.getElementById("noteInput");
+    const modalCancel = document.getElementById("modalCancel");
+    const modalSave = document.getElementById("modalSave");
 
     let currentVideoId = "";
+    let currentEditIndex = -1;
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const url = tabs[0].url;
@@ -30,6 +35,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadBookmarks();
             });
         }
+    });
+
+    modalCancel.addEventListener("click", () => {
+        modalOverlay.classList.remove("active");
+        noteInput.value = "";
+        currentEditIndex = -1;
+    });
+
+    modalSave.addEventListener("click", () => {
+        if (currentEditIndex >= 0) {
+            chrome.storage.sync.get([currentVideoId], (result) => {
+                const videoBookmarks = result[currentVideoId] ? JSON.parse(result[currentVideoId]) : [];
+                videoBookmarks[currentEditIndex].desc = noteInput.value;
+                chrome.storage.sync.set({ [currentVideoId]: JSON.stringify(videoBookmarks) }, () => {
+                    loadBookmarks();
+                });
+            });
+        }
+        modalOverlay.classList.remove("active");
+        noteInput.value = "";
+        currentEditIndex = -1;
     });
 
     function loadBookmarks() {
@@ -71,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
             editBtn.src = "assets/edit.png";
             editBtn.title = "Edit note";
             editBtn.addEventListener("click", () => {
-                editBookmark(index);
+                openModal(index, bookmark.desc);
             });
 
             const deleteBtn = document.createElement("img");
@@ -96,6 +122,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function openModal(index, currentNote) {
+        currentEditIndex = index;
+        noteInput.value = currentNote;
+        modalOverlay.classList.add("active");
+        noteInput.focus();
+    }
+
     function deleteBookmark(index) {
         chrome.storage.sync.get([currentVideoId], (result) => {
             const videoBookmarks = result[currentVideoId] ? JSON.parse(result[currentVideoId]) : [];
@@ -103,19 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
             chrome.storage.sync.set({ [currentVideoId]: JSON.stringify(videoBookmarks) }, () => {
                 loadBookmarks();
             });
-        });
-    }
-
-    function editBookmark(index) {
-        chrome.storage.sync.get([currentVideoId], (result) => {
-            const videoBookmarks = result[currentVideoId] ? JSON.parse(result[currentVideoId]) : [];
-            const newNote = prompt("Edit note:", videoBookmarks[index].desc);
-            if (newNote !== null) {
-                videoBookmarks[index].desc = newNote;
-                chrome.storage.sync.set({ [currentVideoId]: JSON.stringify(videoBookmarks) }, () => {
-                    loadBookmarks();
-                });
-            }
         });
     }
 

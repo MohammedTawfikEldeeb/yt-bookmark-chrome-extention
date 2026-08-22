@@ -43,19 +43,52 @@
         if (!video) return;
 
         const currentTime = video.currentTime;
-        const note = prompt("Add a note for this bookmark:", "");
 
-        if (note === null) return;
+        const existing = document.getElementById("yt-bookmark-modal");
+        if (existing) existing.remove();
 
-        const newBookmark = {
-            time: currentTime,
-            desc: note || "Bookmark at " + formatTime(currentTime),
-        };
+        const modal = document.createElement("div");
+        modal.id = "yt-bookmark-modal";
+        modal.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:999999;display:flex;align-items:center;justify-content:center;";
 
-        chrome.storage.sync.get([currentVideo], (result) => {
-            const videoBookmarks = result[currentVideo] ? JSON.parse(result[currentVideo]) : [];
-            videoBookmarks.push(newBookmark);
-            chrome.storage.sync.set({ [currentVideo]: JSON.stringify(videoBookmarks) });
+        modal.innerHTML = `
+            <div style="background:#1a1a2e;border-radius:10px;padding:16px;width:300px;box-shadow:0 4px 20px rgba(0,0,0,0.5);font-family:Arial,sans-serif;">
+                <h3 style="font-size:14px;font-weight:600;color:#e94560;margin-bottom:12px;">Add Note</h3>
+                <textarea id="yt-bookmark-note" style="width:100%;height:80px;padding:10px;border:1px solid #0f3460;border-radius:6px;background:#16213e;color:#eee;font-size:13px;font-family:inherit;resize:none;outline:none;box-sizing:border-box;" placeholder="Write your note..."></textarea>
+                <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+                    <button id="yt-bookmark-cancel" style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;cursor:pointer;background:#333;color:#ccc;">Cancel</button>
+                    <button id="yt-bookmark-save" style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;cursor:pointer;background:#e94560;color:white;">Save</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const noteInput = document.getElementById("yt-bookmark-note");
+        noteInput.focus();
+
+        document.getElementById("yt-bookmark-cancel").addEventListener("click", () => {
+            modal.remove();
+        });
+
+        document.getElementById("yt-bookmark-save").addEventListener("click", () => {
+            const note = noteInput.value;
+            const newBookmark = {
+                time: currentTime,
+                desc: note || "Bookmark at " + formatTime(currentTime),
+            };
+
+            chrome.storage.sync.get([currentVideo], (result) => {
+                const videoBookmarks = result[currentVideo] ? JSON.parse(result[currentVideo]) : [];
+                videoBookmarks.push(newBookmark);
+                chrome.storage.sync.set({ [currentVideo]: JSON.stringify(videoBookmarks) });
+            });
+
+            modal.remove();
+        });
+
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) modal.remove();
         });
     }
 
