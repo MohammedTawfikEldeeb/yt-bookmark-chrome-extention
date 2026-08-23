@@ -2,6 +2,19 @@
 
 Bookmark YouTube videos at specific timestamps and jump back to them later.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    YouTube[YouTube video page] -->|page loaded| Background[background.js\nService worker]
+    Background -->|NEW: video ID| Content[contentScript.js]
+    Content -->|injects button| YouTube
+    Content -->|save bookmark| Storage[(Chrome Storage Sync)]
+    Popup[Extension popup\npopup.js] -->|read, edit, delete| Storage
+    Popup -->|ADD_BOOKMARK / SEEK| Content
+    Content -->|seek video| YouTube
+```
+
 ## Features
 
 - Bookmark any moment in a YouTube video
